@@ -8,7 +8,10 @@ import {
   TextInput,
 } from 'react-native';
 import { NavigationContainer, NavigationIndependentTree } from '@react-navigation/native';
-// import MapView, { Marker } from 'react-native-maps';
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import * as WebBrowser from 'expo-web-browser';  // Usar expo-web-browser
+
+const Drawer = createDrawerNavigator();
 
 // Tela Input para a gaveta
 const Input = ({ navigation }) => {
@@ -16,7 +19,11 @@ const Input = ({ navigation }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   const exibir = () => {
-    if (text !== '') setIsVisible(true); // Atualiza a visibilidade quando o botão é clicado
+    if (text !== '') setIsVisible(true);
+  };
+
+  const openBrowser = () => {
+    WebBrowser.openBrowserAsync('https://x.com/melhorpost');  // Abrir no navegador
   };
 
   const esconder = () => {
@@ -44,34 +51,37 @@ const Input = ({ navigation }) => {
           value={text}
         />
         <TouchableOpacity style={styles.botao} onPress={exibir}>
-          <Text style={styles.textBotao}>Enviar</Text>
+          <Text style={styles.envButton}>Enviar</Text>
         </TouchableOpacity>
       </View>
       {isVisible && <Text style={styles.text}>Nome: {text}</Text>}
       <View style={styles.containerBtn}>
         <TouchableOpacity
           style={styles.botao2}
-          onPress={() => navigation.navigate('Mapa')}>
-          Ver Mapa
+          onPress={openBrowser}>
+          <Text style={styles.textBotao}>Abrir Webview</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.botao2} onPress={esconder}>
-          Limpar Input
+          <Text style={styles.textBotao}>Limpar Input</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.botao2}
           onPress={() => navigation.openDrawer()}>
-          Abrir Menu
+          <Text style={styles.textBotao}>Abrir Menu</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 };
 
+// Componente principal com o Drawer Navigator
 export default function App() {
   return (
     <NavigationIndependentTree>
     <NavigationContainer>
-        <View name="Home" component={Input} />
+      <Drawer.Navigator>
+        <Drawer.Screen name="Home" component={Input} />
+      </Drawer.Navigator>
     </NavigationContainer>
     </NavigationIndependentTree>
   );
@@ -117,7 +127,7 @@ const styles = StyleSheet.create({
   },
   botao: {
     backgroundColor: '#3075E9',
-    width: '30%',
+    width: '25%',
     height: '90%',
     borderRadius: 3,
     justifyContent: 'center',
@@ -125,7 +135,7 @@ const styles = StyleSheet.create({
   },
   botao2: {
     backgroundColor: 'white',
-    borderRadius: "30px",
+    borderRadius: 30, // Corrigido: valor numérico sem "px"
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 10,
@@ -135,13 +145,11 @@ const styles = StyleSheet.create({
     borderColor: '#D0D0D0',
     width: '30%',
     height: '100%',
-    fontWeight: 'bold',
-    fontSize: 15,
-    color: '#3075E9',
   },
   textBotao: {
-    color: 'white',
+    color: '#3075E9',
     fontSize: 12,
+    fontWeight: 'bold',
   },
   input: {
     borderWidth: 2,
@@ -150,14 +158,16 @@ const styles = StyleSheet.create({
     height: '100%',
     fontSize: 17,
     fontWeight: '600',
-  },
-  map: {
-    flex: 1,
+    paddingHorizontal: 10,
   },
   text: {
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center',
-    height: '100%',
   },
+  envButton: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#fff'
+  }
 });
